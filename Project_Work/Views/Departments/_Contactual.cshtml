@@ -1,0 +1,23 @@
+﻿@model ContactualStaff
+
+
+<tr>
+    <td>
+
+        <input type="hidden" asp-for="ContactualStaffId" />
+        <input asp-for="ContactualStaffName" class="form-control" />
+        <span asp-validation-for="ContactualStaffName" class="text-danger"></span>
+    </td>
+    <td>
+        <input type="text" asp-for="StartDate" class="form-control StartDate" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </td>
+    <td>
+        <input asp-for="WeeklySalary" class="form-control" />
+        <span asp-validation-for="WeeklySalary" class="text-danger"></span>
+    </td>
+    <td>
+        <button type="button" class="btn btn-danger btn-sm del-con"><span class="fa fa-trash"></span></button>
+    </td>
+</tr>
+

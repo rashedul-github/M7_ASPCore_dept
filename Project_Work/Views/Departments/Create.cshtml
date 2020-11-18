@@ -1,0 +1,284 @@
+﻿@model Department
+@{
+    ViewData["Title"] = "Create";
+}
+
+@using (Html.BeginForm("CreatePost", "Departments", FormMethod.Post, new { id = "feq", onesubmit = "javascript:return false;" }))
+{
+    <div class="row">
+        <div class="col-12">
+            <div role="alert" id="alert" class="alert alert-suceess" style="display:none">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="alert-heading" id="msg-heading">Result</h4>
+                <p id="msg"></p>
+
+            </div>
+        </div>
+    </div>
+    <h4 class="alert alert-light">Add Department With Staffs</h4>
+    <div class="form-group row">
+        <label asp-for="DepartmentName" class="col-form-label text-right col-3"></label>
+        <div class="col-4">
+            <input asp-for="DepartmentName" class="form-control form-control-sm" />
+            <span asp-validation-for="DepartmentName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-12">
+        <h5 class="alert alert-light"><i class="fa fa-tasks" aria-hidden="true"></i> Permanent Staff</h5>
+        <table class="table table-bordered table-sm">
+            <thead class="thead-light">
+                <tr>
+                    <th>Sr #</th>
+                    <th>Staff Name</th>
+                    <th>Join Date</th>
+                    <th>Monthly Salary</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tbper"></tbody>
+        </table>
+        <div class="form-group row">
+            <div class="col-4">
+                <input type="Text" class="form-control form-control-sm" name="PermanentStaffName" id="PermanentStaffName" placeholder="Enter Name">
+            </div>
+
+            <div class="col-3">
+                <input type="Text" class="form-control form-control-sm" name="JoinDate" id="JoinDate" placeholder="Enter Date">
+            </div>
+
+            <div class="col-3">
+                <input type="number" class="form-control form-control-sm" name="MonthlySalary" id="MonthlySalary" placeholder="Enter Salary">
+            </div>
+
+            <div class="col-2">
+                <button type="button" id="addstaff1" class="btn btn-outline-info rounded-circle btn-sm"><i class="fa fa-plus"></i></button>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <h5 class="alert alert-light"><i class="fa fa-tasks" aria-hidden="true"></i> Contactual Staff</h5>
+        <table class="table table-bordered table-sm">
+            <thead class="thead-light">
+                <tr>
+                    <th>Sr #</th>
+                    <th>Staff Name</th>
+                    <th>Start Date</th>
+                    <th>Weekly Salary</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tbcon"></tbody>
+        </table>
+        <div class="form-group row">
+
+            <div class="col-4">
+                <input type="Text" class="form-control form-control-sm" name="ContactualStaffName" id="ContactualStaffName" placeholder="Enter Name">
+            </div>
+
+            <div class="col-3">
+                <input type="Text" class="form-control form-control-sm" name="StartDate" id="StartDate" placeholder="Enter Date">
+            </div>
+
+            <div class="col-3">
+                <input type="number" class="form-control form-control-sm" name="WeeklySalary" id="WeeklySalary" placeholder="Enter Salary">
+            </div>
+            <div class="col-2">
+                <button type="button" id="addstaff2" class="btn btn-outline-info rounded-circle btn-sm"><i class="fa fa-plus"></i></button>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-2 offset-5">
+            <button type="button" class="btn btn-primary btn-sm" id="save"><i class="fa fa-save"> Save All</i></button>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-2 offset-5">
+            <a asp-action="Index"><i class="fa fa-reply" aria-hidden="true"> Back to List</i></a>
+        </div>
+    </div>
+}
+
+@section styles{
+    <environment include="Development">
+        <link href="~/libs/gijgo/combined/css/gijgo.css" rel="stylesheet" />
+    </environment>
+}
+
+
+@section scripts{
+    <environment include="Development">
+
+        <script src="~/libs/validation/jquery.validate.js"></script>
+        <script src="~/libs/validation/jquery.validate.unobtrusive.js"></script>
+        <script src="~/libs/gijgo/combined/js/gijgo.js"></script>
+        <script>
+            //date
+            $('#JoinDate').datepicker({
+                uiLibrary: 'bootstrap4',
+                format: "yyyy-mm-dd"
+            });
+            $('#StartDate').datepicker({
+                uiLibrary: 'bootstrap4',
+                format: "yyyy-mm-dd"
+            });
+            //
+            var department = {
+                DepartmentName: "",
+                PermanentStaff: [],
+                ContactualStaff: []
+            }
+            $(document).ready(function () {
+                    //Permanent
+                    for (var i = 0; i < department.PermanentStaff.length; i++) {
+                        $("#tbper").append(`<tr>
+                                            <td>${i + 1}</td>
+                                            <td >${department.PermanentStaff[i].PermanentStaffName}</td >
+                                            <td >${department.PermanentStaff[i].JoinDate}</td >
+                                            <td >${department.PermanentStaff[i].MonthlySalary}</td >
+                                            <td><button data-act='del'  data-index='${i}' type="button"  class='btn btn-primary btn-sm del'>&times;</button></td>
+                                    </tr>`);
+                    }
+                    $("button[data-act='del']").addClass('btn btn-info btn-sm del');
+
+                $("#addstaff1").click(function () {
+                    department.PermanentStaff.push({ PermanentStaffName: $("#PermanentStaffName").val(), JoinDate: $("#JoinDate").val(), MonthlySalary: $("#MonthlySalary").val() })
+                    $("#tbper").append(`<tr>
+                                            <td>${department.PermanentStaff.length}</td>
+                                            <td >${$("#PermanentStaffName").val()}</td>
+                                            <td >${$("#JoinDate").val()}</td>
+                                            <td >${$("#MonthlySalary").val()}</td>
+                                            <td><button data-act='del' data-index='${department.PermanentStaff.length - 1}' type='button"  class='btn btn-primary btn-sm del'>&times;</button></td>
+                                    </tr>`);
+                    $("button[data-act='del']").addClass('btn btn-info btn-sm del')
+                })
+                //Contactual
+                    for (var i = 0; i < department.ContactualStaff.length; i++) {
+                        $("#tbcon").append(`<tr>
+                                            <td>${i + 1}</td>
+                                            <td >${department.ContactualStaff[i].ContactualStaffName}</td >
+                                            <td >${department.ContactualStaff[i].StartDate}</td >
+                                            <td >${department.ContactualStaff[i].WeeklySalary}</td >
+                                            <td><button data-act='rem'  data-indx='${i}' type="button" class='btn btn-primary btn-sm rem'>&times;</button></td>
+                                    </tr>`);
+                    }
+                    $("button[data-act='rem']").addClass('btn btn-info btn-sm rem');
+
+                $("#addstaff2").click(function () {
+                    department.ContactualStaff.push({ ContactualStaffName: $("#ContactualStaffName").val(), StartDate: $("#StartDate").val(), WeeklySalary: $("#WeeklySalary").val() })
+                    $("#tbcon").append(`<tr>
+                                            <td>${department.ContactualStaff.length}</td>
+                                            <td >${$("#ContactualStaffName").val()}</td>
+                                            <td >${$("#StartDate").val()}</td>
+                                            <td >${$("#WeeklySalary").val()}</td>
+                                            <td><button data-act='rem' data-indx='${department.ContactualStaff.length - 1}' type='button" class='btn btn-primary btn-sm rem'>&times;</button></td>
+                                    </tr>`);
+                    $("button[data-act='rem']").addClass('btn btn-info btn-sm rem')
+                })
+                //save
+                $("#save").click(function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                if ($("#feq").valid()) {
+                    console.log('Ok');
+                    department.DepartmentName = $("#DepartmentName").val();
+
+                    console.log(department);
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("CreatePost", "Departments")",
+
+                        data: department,
+                        dataType: "json"
+                    }).done(function (r) {
+                        console.log(r);
+                        if (r.success == true) {
+                            $("#alert").removeClass("alert-warning").addClass("alert-success").show();
+                            $("#msg-heading").html("Success");
+                            $("#msg").html(r.message);
+                            $("#feq").trigger("reset");
+                            department = {
+                                DepartmentName: "",
+                                PermanentStaff: [],
+                                ContactualStaff: []
+                            }
+                            $("#tbper").empty();
+                            $("#tbcon").empty();
+                        }
+                        else {
+                            $("#alert").removeClass("alert-success").addClass("alert-warning").show();
+                            $("#msg-heading").html("Error");
+                            $("#msg").html(r.message);
+                        }
+
+                    }).fail(function (err) {
+                        console.log(err);
+                    });
+                }
+                else {
+                    console.log('Not Ok');
+
+                }
+                })
+                //remove1
+                $('body').on("click", "button.del", function (evt) {
+
+                    var b = $(this);
+                    var tr = b.closest('tr');
+                    var i = b.data("index");
+                    console.log(i);
+                    tr.remove();
+                    department.PermanentStaff.splice(i, 1);
+                    console.log(department.PermanentStaff);
+                    $("#tbper").empty();
+                        for (var i = 0; i < department.PermanentStaff.length; i++) {
+                            $("#tbper").append(`<tr>
+                                            <td>${i + 1}</td>
+                                            <td >${department.PermanentStaff[i].PermanentStaffName}</td >
+                                            <td >${department.PermanentStaff[i].JoinDate}</td >
+                                            <td >${department.PermanentStaff[i].MonthlySalary}</td >
+                                            <td><button data-act='del'  data-index='${i}' type="button" class='btn btn-primary btn-sm del'>&times;</button></td>
+                                    </tr>`);
+                        }
+                        $("button[data-act='del']").addClass('btn btn-info btn-sm del');
+
+                    evt.preventDefault();
+
+                })
+                //remove2
+                $('body').on("click", "button.rem", function (evt1) {
+
+                    var b = $(this);
+                    var tr = b.closest('tr');
+                    var i = b.data("indx");
+                    console.log(i);
+                    tr.remove();
+                    department.ContactualStaff.splice(i, 1);
+                    console.log(department.ContactualStaff);
+                    $("#tbcon").empty();
+                        for (var i = 0; i < department.ContactualStaff.length; i++) {
+                            $("#tbcon").append(`<tr>
+                                            <td>${i + 1}</td>
+                                            <td >${department.ContactualStaff[i].ContactualStaffName}</td >
+                                            <td >${department.ContactualStaff[i].StartDate}</td >
+                                            <td >${department.ContactualStaff[i].WeeklySalary}</td >
+                                            <td><button data-act='rem'  data-indx='${i}' type="button" class='btn btn-primary btn-sm rem'>&times;</button></td>
+                                    </tr>`);
+                        }
+                    $("button[data-act='rem']").addClass('btn btn-info btn-sm rem');
+
+                    evt1.preventDefault();
+
+                })
+                //
+            });
+
+        </script>
+    </environment>
+}
+
+

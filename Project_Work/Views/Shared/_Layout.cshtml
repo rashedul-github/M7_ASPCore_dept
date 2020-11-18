@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="initial-scale=1, shrink-to-fit=no, width=device-width" name="viewport">
+    <title>@ViewBag.Title</title>
+    <environment include="Development">
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i|Roboto+Mono:300,400,700|Roboto+Slab:300,400,700" rel="stylesheet">
+        <link href="~/libs/bootstrap/css/bootstrap.css" rel="stylesheet" />
+        <link href="~/libs/fontawesome/css/font-awesome.css" rel="stylesheet" />
+        <script src="~/libs/popper/umd/popper.js"></script>
+        <style>
+            body {
+                padding-top: 70px;
+                font-family: 'Roboto', Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
+            }
+        </style>
+    </environment>
+@RenderSection("styles", false)
+</head>
+<body>
+
+    <div class="navbar navbar-dark bg-success navbar-expand-md fixed-top border-bottom">
+        <div class="container">
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a href='@Url.Action("Index","Home")' class="navbar-brand"><img src="~/libs/Images/brand1.svg" width="30" /> ABC Cor.</a>
+            <div class="navbar-collapse collapse" id="navbarSupportedContent">
+                <ul class="nav navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Expand me!
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            @Html.ActionLink("Departments", "Index", "Departments", new { }, new { @class = "dropdown-item" })
+                            
+                        </div>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav ml-auto">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                                <button type="submit" class="nav-link btn btn-link text-dark"><i class="fa fa-sign-out" aria-hidden="true"> Logoff</i></button>
+                            </form>
+                        </li>
+
+
+                    }
+                    else
+                    {
+                        <li class="nav-item"><a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register"><i class="fa fa-arrow-circle-right" aria-hidden="true"> Register</i></a></li>
+                        <li class="nav-item"><a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login"><i class="fa fa-sign-in" aria-hidden="true"> Login</i></a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="min-height:400px">
+        @RenderBody()
+    </div>
+    <footer class="container">
+        <div class="card border-light">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <p class="card-text">&copy;@DateTime.Now.Year, <img src="~/libs/Images/brand1.svg" width="20" /> ABC Cor.
+                    </div>
+                    <div class="col-6 text-right">
+                        <p class="card-text"><i class="fa fa-hand-peace-o" aria-hidden="true"> Md Rashedul Islam</i></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <environment include="Development">
+        <script src="~/libs/jquery/jquery.js"></script>
+        <script src="~/libs/bootstrap/js/bootstrap.js"></script>
+    </environment>
+    @RenderSection("scripts", false)
+</body>
+</html>

@@ -1,0 +1,25 @@
+﻿@model PermanentStaff
+
+@{
+    ViewData["Title"] = "Delete";
+}
+<form asp-action="Delete">
+    <input type="hidden" asp-for="PermanentStaffId" />
+    <div class="card">
+        <div class="card-header" style="background-color:#ffd868;">
+            <h3>Are you sure to delete this?</h3>
+        </div>
+        <div class="card-body" style="background-color:#7fcd91;">
+            <div class="card-title">Delete Permanent Staff</div>
+            <div class="card-subtitle'">
+                Staff Name: @Model.PermanentStaffName <br />
+                Join Date: @Model.JoinDate.ToString("yyy-MM-dd") <br />
+                Monthly Salary : @Model.MonthlySalary.ToString("0.00") <br />
+            </div>
+            <p class="card-link">
+                <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash"> Delete</i></button>
+            </p>
+            <a href="@Url.Action("Index","Departments")" class="card-link">Back to list</a>
+        </div>
+    </div>
+</form>

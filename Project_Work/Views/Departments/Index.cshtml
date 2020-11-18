@@ -1,0 +1,139 @@
+﻿@model IEnumerable<Department>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Core.Fluent
+@using X.PagedList.Web.Common
+
+<h4 class="alert alert-light">Department list and related data.</h4>
+
+<table class="table table-bordered table-primary">
+    <thead class="bg-success">
+        <tr>
+            <th>View Related Data</th>
+            <th>Department Name</th>
+            <th>
+                <a asp-action="Create" asp-controller="Departments" class="btn btn-sm">Add <i class="fa fa-external-link" aria-hidden="true"></i></a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var d in Model)
+        {
+            <tr>
+                <td>
+                    <button type="button" class="btn select" data-deptid1="@d.DepartmentId">Permanent Staff <i class="fa fa-chevron-down"></i></button>|
+                    <button type="button" class="btn find" data-deptid2="@d.DepartmentId">Contactual Staff <i class="fa fa-chevron-down"></i></button>
+                </td>
+                <td>@d.DepartmentName</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@d.DepartmentId" class="btn btn-sm">Edit <i class="fa fa-external-link" aria-hidden="true"></i></a>
+                    <a asp-action="Delete" asp-route-id="@d.DepartmentId" class="btn btn-sm" style="color:red;">Delete <i class="fa fa-external-link" aria-hidden="true"></i></a>
+                </td>
+            </tr>
+            <tr style="display:none" id="@("department" + d.DepartmentId)">
+                <td colspan="3">
+                    <table class="table-bordered table-success">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Per. Staff Name</th>
+                                <th>Join Date</th>
+                                <th>Monthly Salary</th>
+                                <th>
+                                    <a asp-action="Create" asp-controller="Permanents" class="btn btn-sm">Add <i class="fa fa-external-link" aria-hidden="true"></i></a>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in d.permanentStaff)
+                            {
+                                <tr>
+                                    <td>@p.PermanentStaffName</td>
+                                    <td>@p.JoinDate.ToString("yyyy-MM-dd")</td>
+                                    <td>@p.MonthlySalary.ToString("0.00")</td>
+                                    <td>
+                                        <a asp-action="Edit" asp-controller="Permanents" asp-route-id="@p.PermanentStaffId" class="btn btn-sm">Edit <i class="fa fa-external-link" aria-hidden="true"></i></a>
+                                        <a asp-action="Delete" asp-controller="Permanents" asp-route-id="@p.PermanentStaffId" class="btn btn-sm">Delete <i class="fa fa-external-link" aria-hidden="true"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            //
+            <tr style="display:none" id="@("debt" + d.DepartmentId)">
+                <td colspan="3">
+                    <table class="table-bordered table-success">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Con. Staff Name</th>
+                                <th>Start Date</th>
+                                <th>Weekly Salary</th>
+                                <th>
+                                    <a asp-action="Create" asp-controller="Contactuals" class="btn btn-sm">Add <i class="fa fa-external-link" aria-hidden="true"></i></a>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in d.contactualStaff)
+                            {
+                            <tr>
+                                <td>@p.ContactualStaffName</td>
+                                <td>@p.StartDate.ToString("yyyy-MM-dd")</td>
+                                <td>@p.WeeklySalary.ToString("0.00")</td>
+                                <td>
+                                    <a asp-action="Edit" asp-controller="Contactuals" asp-route-id="@p.ContactualStaffId" class="btn btn-sm">Edit <i class="fa fa-external-link" aria-hidden="true"></i></a>
+                                    <a asp-action="Delete" asp-controller="Contactuals" asp-route-id="@p.ContactualStaffId" class="btn btn-sm">Delete <i class="fa fa-external-link" aria-hidden="true"></i></a>
+                                </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            //
+        }
+    </tbody>
+</table>
+<div class="col-form-label d-flex justify-content-end">
+    Page: @(ViewBag.CurrentPage) of @(ViewBag.TotalPages)
+</div>
+<div class="d-flex justify-content-end">
+    @(Html.Pager((IPagedList)Model)
+                .Url(page => Url.Action("Index", "Departments", new { page = page }))
+                .Build()
+    )
+</div>
+
+@section styles{ 
+    <environment include="Development">
+        <link href="~/libs/PagedList/PagedList.css" rel="stylesheet" />
+    </environment>
+}
+
+@section scripts{
+    <environment include="Development">
+        <script>
+            $(document).ready(function () {
+                $("button.select").click(function () {
+
+                    var tid = $(this).data("deptid1");
+                    $("#department" + tid).toggle();
+                    $(this).find("i").toggleClass("fa fa-chevron-down fa fa-chevron-up");
+                });
+                $("button.find").click(function () {
+                    var pid = $(this).data("deptid2");
+
+                    $("#debt" + pid).toggle();
+                    $(this).find("i").toggleClass("fa fa-chevron-down fa fa-chevron-up");
+                });
+            });
+        </script>
+    </environment>
+}
+

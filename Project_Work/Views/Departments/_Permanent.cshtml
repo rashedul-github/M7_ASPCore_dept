@@ -1,0 +1,25 @@
+﻿@model PermanentStaff
+
+<tr>
+    <td>
+
+        <input type="hidden" asp-for="PermanentStaffId" />
+        <input asp-for="PermanentStaffName" class="form-control" />
+        <span asp-validation-for="PermanentStaffName" class="text-danger"></span>
+    </td>
+    <td>
+        <input type="text" asp-for="JoinDate" class="form-control JoinDate" />
+        <span asp-validation-for="JoinDate" class="text-danger"></span>
+    </td>
+    <td>
+        <input asp-for="MonthlySalary" class="form-control" />
+        <span asp-validation-for="MonthlySalary" class="text-danger"></span>
+    </td>
+    <td>
+        <button type="button" class="btn btn-danger btn-sm del-per"><span class="fa fa-trash"></span></button>
+    </td>
+</tr>
+
+
+
+

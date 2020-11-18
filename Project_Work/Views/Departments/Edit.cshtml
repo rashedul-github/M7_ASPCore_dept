@@ -1,0 +1,208 @@
+﻿@model Department
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<form method="post" asp-action="EditPost" asp-controller="Departments" id="depts" name="depts">
+    <div class="card">
+        <div class="card-title">
+            <h4 class="alert alert-light">Edit Department</h4>
+        </div>
+        <div class="card-body">
+            <div class="card-text">
+                <input type="hidden" asp-for="DepartmentId" />
+                <div class="form-group row">
+                    <label asp-for="DepartmentName" class="col-form-label text-right col-3"></label>
+                    <div class="col-4">
+                        <input asp-for="DepartmentName" class="form-control form-control-sm" />
+                        <span asp-validation-for="DepartmentName" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title">
+            <h4 class="alert alert-light">Edit Paermanent Staff</h4>
+        </div>
+        <div class="card-body">
+            <div class="card-text" id="dept-per">
+                <table class="table table-bordered">
+                    <thead class="bg-success">
+                        <tr>
+                            <th>
+                                Permanent Staff Name
+                            </th>
+                            <th>
+                                Join Date
+                            </th>
+                            <th>
+                                Monthly Salary
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model.permanentStaff)
+                        {
+                            @await Html.PartialAsync("_Permanent", p)
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title">
+            <h4 class="alert alert-light">Edit Contactual Staff</h4>
+        </div>
+        <div class="card-body">
+            <div class="card-text" id="dept-per">
+                <table class="table table-bordered">
+                    <thead class="bg-success">
+                        <tr>
+                            <th>
+                                Contactual Staff Name
+                            </th>
+                            <th>
+                                Start Date
+                            </th>
+                            <th>
+                                Weekly Salary
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model.contactualStaff)
+                        {
+                            @await Html.PartialAsync("_Contactual", p)
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="form-group row mt-3">
+    <div class="col-2 offset-5">
+        <button type="button" class="btn btn-primary btn-sm" id="update"><i class="fa fa-save"> Update All</i></button>
+    </div>
+</div>
+<div class="form-group row">
+    <div class="col-2 offset-5">
+        <a asp-action="Index"><i class="fa fa-reply" aria-hidden="true"> Back to List</i></a>
+    </div>
+</div>
+
+@section styles{
+    <environment include="Development">
+        <link href="~/libs/gijgo/combined/css/gijgo.css" rel="stylesheet" />
+        <link href="~/libs/bs4-toast/toast.min.css" rel="stylesheet" />
+    </environment>
+}
+
+@section scripts{
+    <environment include="Development">
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        <script src="~/libs/gijgo/combined/js/gijgo.js"></script>
+        <script src="~/libs/bs4-toast/toast.min.js"></script>
+        <script>
+            //$
+            $(document).ready(function () {
+                //date
+                $('input.JoinDate').each(function () {
+                    $(this).datepicker({
+                        uiLibrary: 'bootstrap4',
+                        format: 'yyyy-mm-dd'
+                    });
+                });
+                $('input.StartDate').each(function () {
+                    $(this).datepicker({
+                        uiLibrary: 'bootstrap4',
+                        format: 'yyyy-mm-dd'
+                    });
+                });
+                //remove
+                $("button.del-per").click(function () {
+                    $(this).closest("tr").remove();
+                })
+                $("button.del-con").click(function () {
+                    $(this).closest("tr").remove();
+                })
+                //update
+                $("button#update").click(function () {
+                    console.log("find update button");
+                    var valid = $("form#depts").valid();
+                    if (!valid) return;
+                    var dept = {
+                        PermanentStaff: [],
+                        ContactualStaff: []
+                    };
+                    dept.DepartmentId = $("#DepartmentId").val();
+                    dept.DepartmentName = $("#DepartmentName").val();
+                    //Permanent Staff
+
+                    var PermanentStaffName = $('input[name="PermanentStaffName"]');
+                    var JoinDate = $('input[name="JoinDate"]');
+                    var MonthlySalary = $('input[name="MonthlySalary"]');
+                    $.each($("input[name='PermanentStaffId']"), function (i, vl) {
+                        dept.PermanentStaff.push({ PermanentStaffId: $(vl).val(), PermanentStaffName: $(PermanentStaffName[i]).val(), JoinDate: $(JoinDate[i]).val(), MonthlySalary: $(MonthlySalary[i]).val() });
+                    });
+                  //Contactual Staff
+                 
+                    var ContactualStaffName = $('input[name="ContactualStaffName"]');
+                    var StartDate = $('input[name="StartDate"]');
+                    var WeeklySalary = $('input[name="WeeklySalary"]');
+                    $.each($("input[name='ContactualStaffId']"), function (i, ml) {
+                        dept.ContactualStaff.push({ ContactualStaffId: $(ml).val(), ContactualStaffName: $(ContactualStaffName[i]).val(), StartDate: $(StartDate[i]).val(), WeeklySalary: $(WeeklySalary[i]).val() });
+                    });
+                    console.log(dept);
+                    $.ajax({
+                        type: "POST",
+                        url: "/Departments/Edit",
+                        contentType: "application/json",
+                        dataType: "json",
+                        data: JSON.stringify(dept)
+                    }).done(r => {
+                        console.log(r);
+                        if (r.success == true) {
+                            $.toast({
+                                title: 'Success!',
+                                subtitle: 'Saved',
+                                content: 'Data saved successfully.',
+                                type: 'success',
+                                delay: 3000,
+                                dismissible: true,
+
+                                // is stackable?
+                                stackable: true,
+                                position: 'top-right'
+
+                            });
+                        }
+                        else {
+                            $.toast({
+                                title: 'Error!',
+                                subtitle: 'Failed.',
+                                content: 'Data update failed.',
+                                type: 'warning',
+                                delay: 3000,
+                                dismissible: true,
+
+                                // is stackable?
+                                stackable: true,
+                                position: 'top-center bottom-right'
+
+                            });
+                        }
+                    }).fail(err => {
+                        console.log(err);
+                    });
+                });
+            });
+            
+        </script>
+    </environment>
+}
